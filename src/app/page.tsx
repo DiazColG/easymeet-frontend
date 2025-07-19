@@ -13,7 +13,10 @@ async function createEvent(title: string) {
     timezone: "America/Argentina/Buenos_Aires"
   };
 
-  const res = await fetch('http://localhost:3001/api/events', {
+  // Usamos la variable de entorno para la URL de la API
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+  const res = await fetch(`${apiUrl}/api/events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -39,7 +42,6 @@ export default function HomePage() {
     
     setIsLoading(true);
     
-    // 👇 ARREGLO 1: Cambiamos (error: any) por (error)
     try {
       const newEvent = await createEvent(title);
       setCreatedEvent(newEvent); 
@@ -59,7 +61,6 @@ export default function HomePage() {
   if (createdEvent) {
     return (
       <main className="container mx-auto p-8 text-center">
-        {/* 👇 ARREGLO 2: Quitamos las comillas alrededor del título */}
         <h1 className="text-3xl font-bold mb-4">¡Evento {createdEvent.title} Creado!</h1>
         <p className="text-lg text-gray-600 mb-6">Comparte este enlace con tus invitados.</p>
         <div className="flex justify-center items-center gap-2 bg-gray-100 p-4 rounded-lg max-w-lg mx-auto">
@@ -83,10 +84,26 @@ export default function HomePage() {
     );
   }
 
-  // ... (el resto del archivo no cambia) ...
   return (
     <main className="container mx-auto p-8">
-      {/* ... (el formulario se queda igual) ... */}
+      <h1 className="text-4xl font-bold mb-4">Crea tu EasyMeet</h1>
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+        <input
+          type="text"
+          placeholder="Título del Evento"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full p-2 border rounded text-black"
+          required
+        />
+        <button 
+          type="submit" 
+          disabled={isLoading} 
+          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Creando...' : 'Crear Evento y Obtener Link'}
+        </button>
+      </form>
     </main>
   );
 }

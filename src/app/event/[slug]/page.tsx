@@ -3,7 +3,13 @@ import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-export default async function EventPage({ params }: { params: { slug: string } }) {
+// 👇 ARREGLO: Definimos los tipos de forma más estricta aquí
+type Props = {
+  params: { slug: string };
+};
+
+// Y usamos 'Props' aquí
+export default async function EventPage({ params }: Props) {
   const event = await getEventBySlug(params.slug);
 
   if (!event) {
