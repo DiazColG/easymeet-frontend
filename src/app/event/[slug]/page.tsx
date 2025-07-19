@@ -1,15 +1,12 @@
 // easymeet-frontend/src/app/event/[slug]/page.tsx
+
 import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-// 👇 ARREGLO: Definimos los tipos de forma más estricta aquí
-type Props = {
-  params: { slug: string };
-};
-
-// Y usamos 'Props' aquí
-export default async function EventPage({ params }: Props) {
+// ARREGLO: En lugar de usar un 'type Props' separado,
+// definimos los tipos directamente aquí. Es más directo y evita errores.
+export default async function EventPage({ params }: { params: { slug: string } }) {
   const event = await getEventBySlug(params.slug);
 
   if (!event) {
