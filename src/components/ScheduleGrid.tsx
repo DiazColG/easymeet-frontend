@@ -36,7 +36,10 @@ export function ScheduleGrid({ eventData }: { eventData: EventData }) {
     const counts: Record<string, number> = {};
     for (const p of eventData.participants) {
       for (const a of p.availabilities) {
-        counts[a.startTime] = (counts[a.startTime] || 0) + 1;
+        // Asumiendo que guardamos el inicio de cada slot de 1 hora
+        const slotDate = new Date(a.startTime);
+        const hourStart = new Date(slotDate.setMinutes(0, 0, 0)).toISOString();
+        counts[hourStart] = (counts[hourStart] || 0) + 1;
       }
     }
     return counts;
@@ -71,9 +74,11 @@ export function ScheduleGrid({ eventData }: { eventData: EventData }) {
         );
         localStorage.setItem(`token-${eventData.slug}`, participant.token);
         alert(participantToken ? 'Disponibilidad actualizada!' : 'Disponibilidad guardada!');
-        router.refresh(); // Refresca los datos de la página
+        router.refresh(); 
     } catch (error) {
-        alert("Hubo un error al guardar. Intenta de nuevo.");
+      // 👇 ARREGLO: Ahora usamos la variable 'error' para mostrarla en la consola.
+      console.error("Error al guardar disponibilidad:", error);
+      alert("Hubo un error al guardar. Intenta de nuevo.");
     } finally {
         setIsLoading(false);
     }
@@ -89,10 +94,12 @@ export function ScheduleGrid({ eventData }: { eventData: EventData }) {
               {slots.map(({ iso, time }) => {
                 const isSelected = mySelection.has(iso);
                 const heatLevel = heatmap[iso] || 0;
+                
                 let bgColor = 'bg-gray-100 hover:bg-gray-300';
-                if (heatLevel > 0) bgColor = `bg-green-200`;
-                if (heatLevel > 2) bgColor = `bg-green-400`;
-                if (heatLevel > 5) bgColor = `bg-green-600`;
+                if (heatLevel === 1) bgColor = `bg-green-200`;
+                if (heatLevel === 2) bgColor = `bg-green-300`;
+                if (heatLevel >= 3) bgColor = `bg-green-500 text-white`;
+                
                 if (isSelected) bgColor = `bg-blue-500 text-white`;
 
                 return (
