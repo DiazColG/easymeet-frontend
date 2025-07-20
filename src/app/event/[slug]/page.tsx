@@ -4,9 +4,8 @@ import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-// ARREGLO FINAL: Eliminamos por completo la definición de tipos de los props
-// y dejamos que TypeScript y Next.js los infieran automáticamente.
-export default async function EventPage({ params }: any) {
+// ESTA ES LA SINTAXIS FINAL Y CORRECTA
+export default async function EventPage({ params }: { params: { slug: string } }) {
   const event = await getEventBySlug(params.slug);
 
   if (!event) {
