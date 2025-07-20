@@ -4,17 +4,18 @@ import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-// ARREGLO DEFINITIVO:
-// Definimos el tipo 'Props' con el formato completo que Next.js espera
-// para una página, incluyendo 'params' y 'searchParams'.
+// ARREGLO DEFINITIVO PARA NEXT.JS 15.4.2:
+// En Next.js 15, los params son ahora promesas por defecto
 type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-// Usamos el tipo 'Props' en nuestra función de página.
+// Función de página que maneja params como promesa
 export default async function EventPage({ params }: Props) {
-  const event = await getEventBySlug(params.slug);
+  // Esperamos a que se resuelva la promesa de params
+  const resolvedParams = await params;
+  const event = await getEventBySlug(resolvedParams.slug);
 
   if (!event) {
     notFound();
