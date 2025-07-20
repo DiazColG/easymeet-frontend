@@ -4,18 +4,18 @@ import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-// ARREGLO DEFINITIVO PARA NEXT.JS 15.4.2:
-// En Next.js 15, los params son ahora promesas por defecto
-type Props = {
+// SOLUCIÓN DEFINITIVA PARA NEXT.JS 15.4.2 + VERCEL:
+// Usar la estructura exacta que Vercel espera sin destructuring directo
+interface PageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+}
 
-// Función de página que maneja params como promesa
-export default async function EventPage({ params }: Props) {
-  // Esperamos a que se resuelva la promesa de params
-  const resolvedParams = await params;
-  const event = await getEventBySlug(resolvedParams.slug);
+// Función de página que evita destructuring directo y usa props.params
+export default async function EventPage(props: PageProps) {
+  // Resolver la promesa usando props.params en lugar de destructuring
+  const params = await props.params;
+  const event = await getEventBySlug(params.slug);
 
   if (!event) {
     notFound();
