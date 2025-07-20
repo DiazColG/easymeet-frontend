@@ -6,13 +6,13 @@ import { notFound } from 'next/navigation';
 
 // ARREGLO DEFINITIVO PARA NEXT.JS 15.4.2:
 // En Next.js 15, los params son ahora promesas por defecto
-type Props = {
+interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
 // Función de página que maneja params como promesa
-export default async function EventPage({ params }: Props) {
+export default async function EventPage({ params }: PageProps) {
   // Esperamos a que se resuelva la promesa de params
   const resolvedParams = await params;
   const event = await getEventBySlug(resolvedParams.slug);
