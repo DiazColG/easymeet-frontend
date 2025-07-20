@@ -4,8 +4,16 @@ import { ScheduleGrid } from '@/components/ScheduleGrid';
 import { getEventBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
-// ESTA ES LA SINTAXIS FINAL Y CORRECTA
-export default async function EventPage({ params }: { params: { slug: string } }) {
+// ARREGLO DEFINITIVO:
+// Definimos el tipo 'Props' con el formato completo que Next.js espera
+// para una página, incluyendo 'params' y 'searchParams'.
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+// Usamos el tipo 'Props' en nuestra función de página.
+export default async function EventPage({ params }: Props) {
   const event = await getEventBySlug(params.slug);
 
   if (!event) {
